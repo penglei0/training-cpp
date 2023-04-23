@@ -456,6 +456,21 @@ void feat_15() {
   std::cout << aa << ' ' << bb << ' ' << cc << std::endl;
 }
 
+// NULL 0 nullptr
+/*
+#ifndef __cplusplus
+  #define NULL ((void*)0)
+#else
+  #define NULL 0
+#endif
+*/
+void bar(int a, int* b) {}
+void bar(int a, int i) {}
+void feat_16() {
+  int* p = NULL;
+  std::cout << p << std::endl;
+}
+
 #include <chrono>
 #include <future>
 #include <thread>
