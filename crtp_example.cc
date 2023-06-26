@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <variant>
 
 enum class TestType { kTest1, kTest2 };
 
@@ -14,6 +15,11 @@ class Base {
     // example of how to call Derived::impl_test<type>()
     static_cast<Derived*>(this)->template impl_test<type>();
   }
+
+  std::string& id() { return static_cast<Derived*>(this)->impl_id(); }
+  const std::string& id() const {
+    return static_cast<const Derived*>(this)->impl_id();
+  }
 };
 
 class D1 : public Base<D1> {
@@ -27,10 +33,20 @@ class D1 : public Base<D1> {
       std::cout << "impl kTest2" << std::endl;
     }
   }
+  std::string& impl_id() { return id_; }
+  const std::string& impl_id() const { return id_; }
+
+ private:
+  std::string id_ = "D1";
 };
 class D2 : public Base<D2> {
  public:
   void impl() { std::puts("D2::impl()"); }
+  std::string& impl_id() { return id_; }
+  const std::string& impl_id() const { return id_; }
+
+ private:
+  std::string id_ = "D2";
 };
 // reference version
 template <class Derived>
@@ -61,6 +77,17 @@ void test() {
   handle2(d22);
 
   d11->test<TestType::kTest1>();
+
+  // variant
+  std::variant<std::shared_ptr<Base<D1>>, std::shared_ptr<Base<D2>>> obj;
+  obj = d11;
+  obj = d22;
+  std::cout << "============== variant ==============" << std::endl;
+  std::visit([](auto&& arg) { arg->name(); }, obj);
+
+  auto& id =
+      std::visit([](auto&& arg) -> std::string& { return arg->id(); }, obj);
+  std::cout << "id: " << id << std::endl;
 }
 
 int main() { test(); }
