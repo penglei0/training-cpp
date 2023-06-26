@@ -1,14 +1,32 @@
 #include <iostream>
 #include <memory>
+
+enum class TestType { kTest1, kTest2 };
+
 template <class Derived>
 class Base {
  public:
   void name() { (static_cast<Derived*>(this))->impl(); }
+  // template function in CRTP
+  template <TestType type>
+  void test() {
+    std::cout << "Base::test()" << std::endl;
+    // example of how to call Derived::impl_test<type>()
+    static_cast<Derived*>(this)->template impl_test<type>();
+  }
 };
 
 class D1 : public Base<D1> {
  public:
   void impl() { std::puts("D1::impl()"); }
+  template <TestType type>
+  void impl_test() {
+    if constexpr (type == TestType::kTest1) {
+      std::cout << "impl kTest1" << std::endl;
+    } else if constexpr (type == TestType::kTest2) {
+      std::cout << "impl kTest2" << std::endl;
+    }
+  }
 };
 class D2 : public Base<D2> {
  public:
@@ -41,6 +59,8 @@ void test() {
   std::shared_ptr<Base<D2>> d22 = std::make_shared<D2>();
   handle2(d11);
   handle2(d22);
+
+  d11->test<TestType::kTest1>();
 }
 
 int main() { test(); }

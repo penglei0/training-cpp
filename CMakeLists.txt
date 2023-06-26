@@ -68,3 +68,10 @@ add_executable(training
 target_link_libraries(training 
     PRIVATE
     Threads::Threads)
+
+add_executable(crtp_example
+crtp_example.cc
+ )
+ target_link_libraries(crtp_example 
+     PRIVATE
+     Threads::Threads)
