@@ -43,6 +43,7 @@ class MessageWrapper {
   explicit MessageWrapper(IMessage& msg) : msg_(msg) {}
   ~MessageWrapper() = default;
   void ShowMsg() const { msg_.print(); }
+  const IMessage& GetMsg() const { return msg_; }
 
  private:
   IMessage& msg_;
@@ -61,6 +62,9 @@ int main() {
     NetworkMessage net_msg2;
     wrapper_msg = std::make_shared<MessageWrapper>(net_msg2);
     wrapper_msg->ShowMsg();
+
+    auto& msg = wrapper_msg->GetMsg();
+    msg.print();
   }
   // crash
   // wrapper_msg->ShowMsg();
