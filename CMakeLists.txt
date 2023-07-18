@@ -70,7 +70,7 @@ target_link_libraries(training
     Threads::Threads)
 
 add_executable(crtp_example
-crtp_example.cc
+    crtp_example.cc
  )
 target_link_libraries(crtp_example 
     PRIVATE
@@ -82,4 +82,11 @@ add_executable(wrapper_ref
 target_link_libraries(crtp_example 
     PRIVATE
     Threads::Threads)
-    
+
+# class_derive
+add_executable(class_derive
+    class_derive.cc
+    )
+target_link_libraries(class_derive 
+    PRIVATE
+    Threads::Threads)
