@@ -14,8 +14,15 @@ class Connection {
     mgr_ = nullptr;
   }
   void Print() const { std::cout << "Connection::Print()" << std::endl; }
+  // method 2: how to break circular reference
+  // **we need to call this method explicitly when this object is no longer used
+  void Close() {
+    // eliminate circular reference
+    mgr_ = nullptr;
+  }
 
  private:
+  // method 1: how to break circular reference
   // std::weak_ptr<ConnectionManager> mgr_;
   ConnectionManagerPtr mgr_;
 };
@@ -33,6 +40,12 @@ class ConnectionManager {
     connections_.push_back(conn);
   }
 
+  void CloseConnection() {
+    for (auto& conn : connections_) {
+      conn->Close();
+    }
+  }
+
  private:
   std::vector<ConnectionPtr> connections_;
 };
@@ -42,5 +55,6 @@ int main() {
   auto conn = std::make_shared<Connection>(mgr);
   conn->Print();
   mgr->AddConnection(conn);
+  mgr->CloseConnection();
   return 0;
 }
