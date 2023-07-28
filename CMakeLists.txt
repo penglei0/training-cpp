@@ -90,3 +90,12 @@ add_executable(class_derive
 target_link_libraries(class_derive 
     PRIVATE
     Threads::Threads)
+
+# class_derive
+add_executable(circular_ref
+    circular_ref.cc
+    )
+target_link_libraries(circular_ref 
+    PRIVATE
+    Threads::Threads)
+
