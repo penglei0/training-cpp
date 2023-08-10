@@ -99,3 +99,9 @@ target_link_libraries(circular_ref
     PRIVATE
     Threads::Threads)
 
+add_executable(inplace_construct
+    inplace_construct.cc
+    )
+target_link_libraries(inplace_construct 
+    PRIVATE
+    Threads::Threads)
