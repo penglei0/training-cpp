@@ -84,6 +84,17 @@ class ip_tcp_adapter : public ip_rx_pdu_notifier {
   tcp_rx_lower_layer_interface* tcp_handler = nullptr;
 };
 
+class ip_rx_entity : public ip_rx_pdu_interface {
+ public:
+  ip_rx_entity() = default;
+  ~ip_rx_entity() = default;
+  void connect_tcp(ip_tcp_adapter& tcp_dn_) { tcp_dn = &tcp_dn_; }
+  void on_new_pdu(octetVec pdu) override { tcp_dn->handle_sdu(std::move(pdu)); }
+
+ private:
+  ip_tcp_adapter* tcp_dn = nullptr;
+};
+
 /// @brief Adapter between TCP and app layer: tcp -> app.
 class app_tcp_adapter : public tcp_rx_upper_layer_notifier {
  public:
@@ -112,14 +123,18 @@ class tcp_rx_entity : public tcp_rx_lower_layer_interface {
 int main() {
   // tcp/ip app layers
   // inside of a app entity may have a `app_tcp_adapter`
-  app_tcp_adapter app_layer;
+  app_tcp_adapter app_adapter;
 
-  tcp_rx_entity tcp_layer(app_layer);
+  tcp_rx_entity tcp_layer(app_adapter);
+
+  ip_tcp_adapter tcp_adapter(tcp_layer);
 
   // inside of a ip entity may have a `ip_tcp_adapter`
-  ip_tcp_adapter ip_layer(tcp_layer);
+  ip_rx_entity ip_rx;
+
+  ip_rx.connect_tcp(tcp_adapter);
 
   // simulate the receiving of a PDU from lower layer
   octetVec data;
-  ip_layer.handle_sdu(data);  // ip -> tcp -> app
+  ip_rx.on_new_pdu(data);  // ip -> tcp -> app
 }
