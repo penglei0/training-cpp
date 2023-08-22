@@ -105,3 +105,10 @@ add_executable(inplace_construct
 target_link_libraries(inplace_construct 
     PRIVATE
     Threads::Threads)
+# adapter
+add_executable(adapter
+    adapter.cc
+    )
+target_link_libraries(adapter 
+    PRIVATE
+    Threads::Threads)
