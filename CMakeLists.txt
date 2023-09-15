@@ -60,6 +60,26 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Werror -O3")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g -O3")
+
+if (NOT BUILD_TESTING)
+    message(STATUS "Unit test build is disabled for thirdparties.")
+endif ()
+
+set(BENCHMARK_USE_BUNDLED_GTEST OFF)
+set(BENCHMARK_ENABLE_GTEST_TESTS OFF)
+set(BENCHMARK_ENABLE_TESTING OFF)
+include(FetchContent)
+FetchContent_Declare(
+    google_benchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG v1.7.1  
+)
+# uncomment this line if you want to use the source code of google_benchmark without downloading it.
+# set(FETCHCONTENT_SOURCE_DIR_GOOGLE_BENCHMARK ${CMAKE_BINARY_DIR}/_deps/google_benchmark-src)
+FetchContent_MakeAvailable(google_benchmark)
+message("google benchmark source directory is :" ${benchmark_SOURCE_DIR})
+include_directories(${benchmark_SOURCE_DIR}/benchmark/include)
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 add_executable(training
@@ -112,3 +132,11 @@ add_executable(adapter
 target_link_libraries(adapter 
     PRIVATE
     Threads::Threads)
+    # dynamics_cast.cc
+add_executable(dynamics_cast
+    dynamics_cast.cc
+)
+target_link_libraries(dynamics_cast 
+PRIVATE
+benchmark::benchmark
+Threads::Threads)
