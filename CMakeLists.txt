@@ -140,3 +140,11 @@ target_link_libraries(dynamics_cast
 PRIVATE
 benchmark::benchmark
 Threads::Threads)
+
+add_executable(crtp_benchmark
+crtp_benchmark.cc
+)
+target_link_libraries(crtp_benchmark 
+PRIVATE
+benchmark::benchmark
+Threads::Threads)
