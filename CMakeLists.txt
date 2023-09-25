@@ -148,3 +148,13 @@ target_link_libraries(crtp_benchmark
 PRIVATE
 benchmark::benchmark
 Threads::Threads)
+
+# print_byte_order
+add_executable(lock_free
+lock_free.cc
+)
+target_link_libraries(lock_free 
+PRIVATE
+atomic
+benchmark::benchmark
+Threads::Threads)
