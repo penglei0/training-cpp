@@ -43,12 +43,13 @@ class Test {
     msg = std::make_unique<NetworkMessage>();
     shared_msg = std::make_shared<NetworkMessage>();
   }
+  IMessage& GetMsg() { return *msg; }  // wrong
   // IMessageUPtr& GetMsg() { return msg; }  // wrong
   // IMessageUPtr GetMsg() { return std::move(msg); }  // ok
   // NetworkMessageUPtr& GetMsg() { return msg; }  // ok
   // IMessagePtr& GetMsg2() { return shared_msg; }  // wrong
   // IMessagePtr GetMsg3() { return shared_msg; }  // ok
-  NetworkMessagePtr& GetMsg2() { return shared_msg; }  // ok
+  // NetworkMessagePtr& GetMsg2() { return shared_msg; }  // ok
 
  private:
   NetworkMessageUPtr msg = nullptr;
@@ -89,6 +90,6 @@ int main() {
   // crash
   // wrapper_msg->ShowMsg();
   Test t;
-  auto& msg = t.GetMsg2();
+  auto& msg = t.GetMsg();
   return 0;
 }
