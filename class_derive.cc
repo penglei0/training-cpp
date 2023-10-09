@@ -15,6 +15,8 @@ class Message : public IMessage {
   ~Message() override = default;
   void print() const override { std::cout << "Message::print()" << std::endl; }
 };
+using IMessagePtr = std::shared_ptr<IMessage>;
+using IMessageUPtr = std::unique_ptr<IMessage>;
 /// @brief concrete class
 class NetworkMessage : public IMessage {
  public:
@@ -32,12 +34,29 @@ class NetworkMessage : public IMessage {
     std::cout << "NetworkMessage::print()" << std::endl;
   }
 };
+using NetworkMessagePtr = std::shared_ptr<NetworkMessage>;
+using NetworkMessageUPtr = std::unique_ptr<NetworkMessage>;
 
-using IMessagePtr = std::shared_ptr<IMessage>;
+class Test {
+ public:
+  Test() {
+    msg = std::make_unique<NetworkMessage>();
+    shared_msg = std::make_shared<NetworkMessage>();
+  }
+  // IMessageUPtr& GetMsg() { return msg; }  // wrong
+  // IMessageUPtr GetMsg() { return std::move(msg); }  // ok
+  // NetworkMessageUPtr& GetMsg() { return msg; }  // ok
+  // IMessagePtr& GetMsg2() { return shared_msg; }  // wrong
+  // IMessagePtr GetMsg3() { return shared_msg; }  // ok
+  NetworkMessagePtr& GetMsg2() { return shared_msg; }  // ok
+
+ private:
+  NetworkMessageUPtr msg = nullptr;
+  NetworkMessagePtr shared_msg = nullptr;
+};
 
 void PrintMessage(const IMessage& msg) { msg.print(); }
 void PrintMessage(const IMessagePtr& msg) { msg->print(); }
-
 class MessageWrapper {
  public:
   explicit MessageWrapper(IMessage& msg) : msg_(msg) {}
@@ -49,6 +68,7 @@ class MessageWrapper {
   IMessage& msg_;
 };
 using MessageWrapperPtr = std::shared_ptr<MessageWrapper>;
+using MessageWrapperUPtr = std::unique_ptr<MessageWrapper>;
 
 int main() {
   auto my_msg = std::make_shared<Message>();
@@ -68,5 +88,7 @@ int main() {
   }
   // crash
   // wrapper_msg->ShowMsg();
+  Test t;
+  auto& msg = t.GetMsg2();
   return 0;
 }
