@@ -3,6 +3,7 @@
 #include <functional>  // std::reference_wrapper
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 using octetVec = std::vector<uint8_t>;
@@ -20,6 +21,7 @@ class BufferProvider {
 };
 
 int main() {
+  std::unordered_map<int, std::reference_wrapper<octetVec>> my_map;
   octetVec data;
   data.resize(10);
 
@@ -28,6 +30,13 @@ int main() {
   bufp.AddBuffer(data);
   auto& buf = bufp.GetBuffer(0);
   buf[0] = 99;
+
+  my_map.insert(std::make_pair(0, std::ref(data)));
+
+  std::cout << "data[0]: " << (int)data[0] << std::endl;
+  std::cout << "map data[0]: " << (int)my_map.at(0).get()[0] << std::endl;
+
+  my_map.at(0).get()[0] = 100;
 
   std::cout << "data[0]: " << (int)data[0] << std::endl;
   return 0;
