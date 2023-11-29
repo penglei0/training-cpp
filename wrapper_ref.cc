@@ -20,6 +20,32 @@ class BufferProvider {
   std::vector<std::reference_wrapper<octetVec>> buf_list_;
 };
 
+class Element {
+ public:
+  Element() {}
+  virtual ~Element() {}
+  // disable copy constructor
+  Element(const Element&) = delete;
+  // disable copy assignment operator
+  Element& operator=(const Element&) = delete;
+  // enable move constructor
+  Element(Element&&) = delete;
+  // enable move assignment operator
+  Element& operator=(Element&&) = delete;
+  void Print() const { std::cout << "Element::Print()" << std::endl; }
+};
+
+class Test {
+ public:
+  std::tuple<const Element&, const Element&> GetTuple() const {
+    return std::make_tuple(std::ref(a), std::ref(b));
+  }
+
+ private:
+  Element a;
+  Element b;
+};
+
 int main() {
   std::unordered_map<int, std::reference_wrapper<octetVec>> my_map;
   octetVec data;
@@ -39,5 +65,10 @@ int main() {
   my_map.at(0).get()[0] = 100;
 
   std::cout << "data[0]: " << (int)data[0] << std::endl;
+
+  Test tt;
+  const auto& [a, b] = tt.GetTuple();
+  a.Print();
+  b.Print();
   return 0;
 }
