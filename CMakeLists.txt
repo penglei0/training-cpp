@@ -124,3 +124,6 @@ target_link_libraries(lock_free PRIVATE atomic benchmark::benchmark
 add_executable(bytes_order bytes_order.cc)
 target_link_libraries(bytes_order PRIVATE atomic benchmark::benchmark
                                           Threads::Threads)
+# task_pool.cc
+add_executable(task_pool task_pool.cc)
+target_link_libraries(task_pool PRIVATE atomic Threads::Threads)
