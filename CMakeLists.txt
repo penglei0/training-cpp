@@ -127,3 +127,7 @@ target_link_libraries(bytes_order PRIVATE atomic benchmark::benchmark
 # task_pool.cc
 add_executable(task_pool task_pool.cc)
 target_link_libraries(task_pool PRIVATE atomic Threads::Threads)
+
+# diamond.cc
+add_executable(diamond diamond.cc)
+target_link_libraries(diamond PRIVATE atomic Threads::Threads)
