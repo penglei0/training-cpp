@@ -11,6 +11,15 @@ struct my_header {
 #endif
 };
 
+// bit order usually follows the same endianness as the byte order for a given
+// system.
+// my_header2 can't be used to transfer data over the network.
+struct my_header2 {
+  uint8_t a : 1;
+  uint8_t b : 2;
+  uint8_t c : 5;
+};
+
 int main() {
   struct my_header header;
   *((uint16_t *)&header) = 0x2211;
